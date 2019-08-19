@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style >
+        ul,ol{
+            list-style:none;
+        }
+        buttom {
+            display: inline-block;
+            width: 70px;
+            height: 20px;
+            font-size: 14px;
+            background-color: darkgrey;
+            cursor: pointer ;
+        }
+        </style >
+</head>
+<body>
+<div id="app">
+    <input type="text" v-model="msg" >
+    <ul>
+        <li v-for="(user,index) in fn">
+            {{index}}--{{user.name}}--{{user.age}}
+        </li>
+    </ul>
+    <button @click="sortAge(0)">年龄升序</button>
+    <button @click="sortAge(1)">年龄降序</button>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+
+<script>
+    let vm = new Vue({
+        el:"#app",
+        data:{
+            msg:'',
+            users:[
+                {name:'Mark',age:18},
+                {
+                    name:'Jack',age:25
+                },
+                {
+                    name:'Danny',age:27
+                },
+                {
+                    name:'Marry',age:22
+                }
+            ]
+        },
+        methods :{
+            sortAge(num){
+                   this.users.sort((a,b)=>{
+                    if(num){
+                        return a.age-b.age;//升序
+                    }else {
+                        return b.age-a.age;
+                    }
+                   })
+             }
+
+
+        },
+
+       computed:{
+            fn(){
+                return this.users.filter ((user)=>{
+                    return user .name .includes (this.msg);
+                })
+            }
+       }
+
+    })
+    
+</script>
+
+</body>
+</html>
