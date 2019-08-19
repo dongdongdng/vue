@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>京东购物车</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@3.3.7/dist/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <style>
+        *{
+            margin:0;
+            padding:0;
+        }
+        #app {
+            margin:0px auto;
+            width: 1200px;
+            height: 500px;
+            border:1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+<div id="app">
+    <table class="table table-hover">
+        <caption class="h1 text-center text-success">京东购物车</caption>
+        <tr>
+            <td>
+                <label>全选</label>
+                <input type="checkbox" v-model="checkAll" @change="selectAll">
+            </td>
+            <td>
+                商品
+            </td>
+            <td>
+                商品描述
+            </td>
+            <td>
+                单价
+            </td>
+            <td>
+                数量
+            </td>
+            <td>
+                小计
+            </td>
+            <td>
+                操作
+            </td>
+        </tr>
+        <tr v-for="(product,index) in products">
+            <td>
+                <input type="checkbox" v-model="product.isSelect" @change="inSelect">
+            </td>
+            <td><img :src="product.imgUrl" alt="" width="127px" height="75px" ></td>
+            <td>{{product.text}}</td>
+            <td>{{product.pre}}</td>
+            <td><input type="number" v-model.number="product.amount"></td>
+            <td>{{product.pre*product.amount | fixed(2)}}</td>
+            <td><button class="btn btn-danger" @click="remove(index)">删除</button></td>
+        </tr>
+        <tr>
+            <td>总计：{{totalAll | fixed(2)}}</td>
+        </tr>
+    </table>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.6.10/dist/vue.js"></script>
+<script>
+    let vm = new Vue({
+        el:"#app",
+        filter:{
+            fixed(value,num){
+                return '￥'+value.toFixed(num)+'元';
+            }
+        },
+        data:{
+            //内容映射视图
+            checkAll:false ,
+            products:[
+                {
+                    isSelect:false ,
+                    imgUrl:"img/u=1720286957,2383935479&fm=85&app=52&f=PNG.jpg",
+                    text:"深入浅出node.js",
+                    pre:"54.5",
+                    amount:"1"
+                },
+                {
+                    isSelect:false ,
+                    imgUrl:"img/FEC4ABC5D6DE9F8A.jpg",
+                    text:"vue实战",
+                    pre:"62.4",
+                    amount:"1"
+                }
+            ]
+        },
+        computed :{
+            totalAll(){
+                return this.products.reduce((pe,next)=>{
+                    return pe + next .pre * next .amount ;
+                },0)
+            }
+        },
+        methods :{
+                selectAll(){
+                    this.products.forEach (product=>{
+                         product .isSelect = this.checkAll
+                    })
+                },
+            inSelect(){
+                    this.products.every (produc=>{
+                        return this.checkAll = produc .isSelect;
+                    })
+            },
+            remove(index){
+               this.products .splice (index,1);
+            }
+        }
+    })
+</script>
+</body>
+</html>
