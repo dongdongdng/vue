@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="Generator" content="EditPlus®">
+  <meta name="Author" content="">
+  <meta name="Keywords" content="">
+  <meta name="Description" content="">
+  <title>新闻列表</title>
+  <style></style>
+  </head>
+  <body>
+    <div id="app">
+            <router-view></router-view>
+    </div>
+   
+    <!--newsList组件内容-->
+    <template id="newsList">
+        <div class="newsList">
+            <h3>新闻列表</h3>
+            <ul>
+                <li v-for="items in newsList">
+                    <router-link :to="{name:'aritclelink',params:{id:items.aid}}">{{items.title}}</router-link>
+                </li>
+                </ul>
+        </div>
+        </template>
+
+        <!--aritcle组件内容-->
+    <template id="aritcle">
+        <div class="aritcle">
+            <a href="javascript:history.go(-1)">返回上一页</a>
+            <h4>{{title}}</h4>
+            <div v-html="content">
+                
+            </div>
+        </div>
+        </template>
+
+        <!-- 开发环境版本，包含了有帮助的命令行警告 -->
+        <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+        <!--引入vue-router-->
+        <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+            <!--引入axios链接-->
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script>
+//    //设置数据的返回格式
+//    axios.interceptors.response.use(function (response) {
+//             return response.data.result;
+//         });
+    //往vue原型注入axios函数
+    Vue.prototype.$axios=axios
+    //newsList组件
+    let newsList={
+        template:"#newsList",
+        data(){
+            return{
+                newsList:[]
+            }
+        },
+        async created(){
+            let {data:{result}}=await this.$axios.get("http://www.phonegap100.com/appapi.php?a=getPortalList&catid=20")
+            this.newsList=result
+        }
+    }
+    
+    //aritcle组件
+    let aritcle={
+        template:"#aritcle",
+        data(){
+            return{
+                title:"",
+                content:""
+            }
+        },
+       async created(){
+           let fenda=await this.$axios.get("http://www.phonegap100.com/appapi.php?a=getPortalArticle&aid="+this.$route.params.id)
+        //    console.log(fenda)
+           this.title=fenda.data.result[0].title;
+           this.content=fenda.data.result[0].content
+           
+       }
+    }
+
+    //路由配置表
+    let routes=[
+        {path:"/",component:newsList},
+        {path:"/aritcle/:id",name:"aritclelink",component:aritcle}
+    ]
+
+    //实现路由实例化
+    let router=new VueRouter({
+        routes:routes
+    })
+
+    let vm =new Vue({
+        el:"#app",
+        router
+    })
+</script>
+      </body>
+      </html>
